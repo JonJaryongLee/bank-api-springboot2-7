@@ -16,7 +16,7 @@ public class User {
     private String password;
 
     @Column(name = "is_superuser", columnDefinition = "boolean default false")
-    private Boolean isSuperuser;
+    private Boolean isSuperuser = false;
     private String nickname;
     private Long age;
     private Long money;
