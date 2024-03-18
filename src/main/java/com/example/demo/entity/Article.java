@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NamedEntityGraph(name = "article_with_user", attributeNodes = @NamedAttributeNode("user"))
@@ -18,6 +19,9 @@ public class Article {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
     private String title;
     private String content;
