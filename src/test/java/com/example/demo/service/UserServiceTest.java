@@ -38,6 +38,19 @@ class UserServiceTest {
     }
 
     @Test
+    public void signUpTest() {
+        // given
+        String username = user.getUsername();
+
+        // when
+        String token = userService.signUp(user);
+
+        // then
+        Assertions.assertThat(token).isNotNull();
+        Assertions.assertThat(userRepository.findByUsername(username)).isNotNull();
+    }
+
+    @Test
     public void logInTest() {
         // given
         userService.signUp(user);
@@ -55,10 +68,118 @@ class UserServiceTest {
         userService.signUp(user);
 
         // when
-        RuntimeException e = assertThrows(RuntimeException.class,
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
                 () -> userService.signUp(user));
 
         // then
         Assertions.assertThat(e.getMessage()).isEqualTo("회원 가입 중 에러가 발생했습니다: User ID already exists");
+    }
+
+    @Test
+    public void logInNonExistentUserTest() {
+        // given
+        String nonExistentUserId = "nonExistentUser";
+        String anyPassword = "anyPassword";
+
+        // when
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> userService.logIn(nonExistentUserId, anyPassword));
+
+        // then
+        Assertions.assertThat(e).isNotNull();
+        Assertions.assertThat(e.getMessage()).isEqualTo("로그인 중 에러가 발생했습니다: User does not exist");
+    }
+
+    @Test
+    public void logInInvalidPasswordTest() {
+        // given
+        userService.signUp(user);
+
+        String existentUserId = "testUser";
+        String invalidPassword = "invalidPassword";
+
+        // when
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> userService.logIn(existentUserId, invalidPassword));
+
+        // then
+        Assertions.assertThat(e).isNotNull();
+        Assertions.assertThat(e.getMessage()).isEqualTo("로그인 중 에러가 발생했습니다: Invalid password");
+    }
+
+    @Test
+    public void signUpWithEmptyUsernameTest() {
+        // given
+        String emptyUsername = "    ";
+        String validPassword = "validPassword";
+        String validNickname = "Test User";
+
+        User user = new User();
+        user.setUsername(emptyUsername);
+        user.setPassword(validPassword);
+        user.setNickname(validNickname);
+
+        // when
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> userService.signUp(user));
+
+        // then
+        Assertions.assertThat(e).isNotNull();
+        Assertions.assertThat(e.getMessage()).isEqualTo("회원 가입 중 에러가 발생했습니다: Username cannot be empty");
+    }
+
+    @Test
+    public void signUpWithEmptyNicknameTest() {
+        // given
+        String validUsername = "sample";
+        String validPassword = "validPassword";
+        String emptyNickname = "     ";
+
+        User user = new User();
+        user.setUsername(validUsername);
+        user.setPassword(validPassword);
+        user.setNickname(emptyNickname);
+
+        // when
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> userService.signUp(user));
+
+        // then
+        Assertions.assertThat(e).isNotNull();
+        Assertions.assertThat(e.getMessage()).isEqualTo("회원 가입 중 에러가 발생했습니다: Nickname cannot be empty");
+    }
+
+    @Test
+    public void signUpWithEmptyPasswordTest() {
+        // given
+        String validUsername = "sample";
+        String emptyPassword = "   ";
+        String validNickname = "mynickname";
+
+        User user = new User();
+        user.setUsername(validUsername);
+        user.setPassword(emptyPassword);
+        user.setNickname(validNickname);
+
+        // when
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> userService.signUp(user));
+
+        // then
+        Assertions.assertThat(e).isNotNull();
+        Assertions.assertThat(e.getMessage()).isEqualTo("회원 가입 중 에러가 발생했습니다: User Password cannot be empty");
+    }
+
+    @Test
+    public void signUpWithTendencyTest() {
+        // given
+        user.setTendency(User.Tendency.성실형);
+
+        // when
+        String token = userService.signUp(user);
+
+        // then
+        Assertions.assertThat(token).isNotNull();
+        Assertions.assertThat(userRepository.findByUsername(user.getUsername())).isNotNull();
     }
 }
