@@ -6,7 +6,6 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@NamedEntityGraph(name = "product_with_option", attributeNodes = @NamedAttributeNode("productOption"))
 @Getter @Setter
 public class Product {
 
@@ -27,7 +26,7 @@ public class Product {
     private String korCoNm;
 
     @Column(name = "pin_prdt_nm")
-    private String fin_prdt_nm;
+    private String finPrdtNm;
 
     @Column(name = "etc_note")
     private String etcNote;

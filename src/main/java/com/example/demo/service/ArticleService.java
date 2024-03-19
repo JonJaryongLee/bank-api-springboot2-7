@@ -1,11 +1,14 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Article;
+import com.example.demo.entity.Comment;
 import com.example.demo.repository.ArticleRepository;
+import com.example.demo.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,6 +17,7 @@ import java.util.List;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
 
     /**
      * 모든 게시글을 조회합니다.
@@ -21,14 +25,6 @@ public class ArticleService {
      */
     public List<Article> findArticles() {
         return articleRepository.findAll();
-    }
-
-    /**
-     * 모든 게시글을 조회하되, 작성자 정보를 포함합니다.
-     * @return 게시글 목록
-     */
-    public List<Article> findArticlesWithUser() {
-        return articleRepository.findAllWithUser();
     }
 
     /**
@@ -42,17 +38,6 @@ public class ArticleService {
     }
 
     /**
-     * 주어진 번호에 해당하는 게시글을 조회하되, 작성자 정보를 포함합니다.
-     * @param articleNo 조회할 게시글 번호
-     * @return 조회된 게시글
-     */
-    public Article findArticleWithUser(Long articleNo) {
-        verifyArticleExists(articleNo);
-        return articleRepository.findByIdWithUser(articleNo)
-                .orElse(new Article());
-    }
-
-    /**
      * 새로운 게시글을 생성합니다.
      * @param article 생성할 게시글
      */
@@ -60,6 +45,8 @@ public class ArticleService {
     public void createArticle(Article article) {
         verifyArticleNotNull(article);
         verifyEmptyFields(article);
+        article.setCreatedAt(LocalDateTime.now());
+        article.setUpdatedAt(LocalDateTime.now());
         articleRepository.save(article);
     }
 
@@ -69,7 +56,6 @@ public class ArticleService {
      */
     @Transactional
     public void deleteArticle(Long articleNo) {
-        Article article = findArticle(articleNo);
         articleRepository.deleteById(articleNo);
     }
 
@@ -82,17 +68,8 @@ public class ArticleService {
         verifyArticleNotNull(article);
         verifyEmptyFields(article);
         verifyArticleExists(article.getId());
+        article.setUpdatedAt(LocalDateTime.now());
         articleRepository.save(article);
-    }
-
-    /**
-     * 주어진 게시글이 존재하는지 검증합니다.
-     * @param articleNo 검증할 게시글
-     * @throws IllegalStateException 만약 존재하지 않는 게시물이라면, IllegalStateException 을 발생시킵니다.
-     */
-    private Article verifyArticleExists(Long articleNo) {
-        return articleRepository.findById(articleNo).orElseThrow(
-                () -> new IllegalStateException("Article does not exist"));
     }
 
     /**
@@ -118,5 +95,26 @@ public class ArticleService {
         } else if (article.getContent() == null || article.getContent().trim().isEmpty()) {
             throw new IllegalArgumentException("Content cannot be empty");
         }
+    }
+
+    /**
+     * 게시글의 전체 댓글을 가져옵니다.
+     *
+     * @param articleNo 게시글 아이디
+     * @return 게시글의 댓글 목록
+     */
+    public List<Comment> findComments(Long articleNo){
+        Article article = verifyArticleExists(articleNo);
+        return commentRepository.findByArticle(article);
+    }
+
+    /**
+     * 주어진 게시글이 존재하는지 검증합니다.
+     * @param articleNo 검증할 게시글
+     * @throws IllegalStateException 만약 존재하지 않는 게시물이라면, IllegalStateException 을 발생시킵니다.
+     */
+    private Article verifyArticleExists(Long articleNo) {
+        return articleRepository.findById(articleNo).orElseThrow(
+                () -> new IllegalStateException("Article does not exist"));
     }
 }

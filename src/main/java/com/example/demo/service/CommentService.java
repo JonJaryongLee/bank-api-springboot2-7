@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -24,14 +25,6 @@ public class CommentService {
     }
 
     /**
-     * 모든 댓글을 조회하되, 작성자와 게시글 정보를 포함합니다.
-     * @return 댓글 목록
-     */
-    public List<Comment> findCommentsWithUserAndArticle() {
-        return commentRepository.findAllWithUserAndArticle();
-    }
-
-    /**
      * 주어진 번호에 해당하는 댓글을 조회합니다.
      * @param commentNo 조회할 댓글 번호
      * @return 조회된 댓글
@@ -42,17 +35,6 @@ public class CommentService {
     }
 
     /**
-     * 주어진 번호에 해당하는 댓글을 조회하되, 작성자와 게시글 정보를 포함합니다.
-     * @param commentNo 조회할 댓글 번호
-     * @return 조회된 댓글
-     */
-    public Comment findCommentWithUserAndArticle(Long commentNo) {
-        verifyCommentExists(commentNo);
-        return commentRepository.findByIdWithUserAndArticle(commentNo)
-                .orElse(new Comment());
-    }
-
-    /**
      * 새로운 댓글을 생성합니다.
      * @param comment 생성할 댓글
      */
@@ -60,6 +42,8 @@ public class CommentService {
     public void createComment(Comment comment) {
         verifyCommentNotNull(comment);
         verifyEmptyFields(comment);
+        comment.setCreatedAt(LocalDateTime.now());
+        comment.setUpdatedAt(LocalDateTime.now());
         commentRepository.save(comment);
     }
 
@@ -69,7 +53,6 @@ public class CommentService {
      */
     @Transactional
     public void deleteComment(Long commentNo) {
-        Comment comment = findComment(commentNo);
         commentRepository.deleteById(commentNo);
     }
 
@@ -82,6 +65,7 @@ public class CommentService {
         verifyCommentNotNull(comment);
         verifyEmptyFields(comment);
         verifyCommentExists(comment.getId());
+        comment.setUpdatedAt(LocalDateTime.now());
         commentRepository.save(comment);
     }
 

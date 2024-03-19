@@ -7,10 +7,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@NamedEntityGraph(name = "comment_with_user_and_article", attributeNodes = {
-        @NamedAttributeNode("user"),
-        @NamedAttributeNode("article")
-})
 @Getter @Setter
 public class Comment {
 
@@ -28,19 +24,9 @@ public class Comment {
 
     private String content;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

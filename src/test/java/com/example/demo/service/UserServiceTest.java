@@ -198,12 +198,31 @@ class UserServiceTest {
     }
 
     @Test
-    public void findPortfoliosWithUser() {
+    public void findPortfoliosTest() {
         // given
         userRepository.save(user);
 
         Product product1 = new Product();
         Product product2 = new Product();
+
+        product1.setFinPrdtCd("testFinPrdtCd1");
+        product1.setDclsMonth("testDclsMonth1");
+        product1.setKorCoNm("testKorCoNm1");
+        product1.setFinPrdtNm("testFinPrdtNm1");
+        product1.setEtcNote("testEtcNote1");
+        product1.setJoinDeny(Product.JoinDeny.서민전용);
+        product1.setJoinMember(Product.JoinMember.만50세이상);
+        product1.setJoinWay(Product.JoinWay.스마트폰);
+
+        product2.setFinPrdtCd("testFinPrdtCd2");
+        product2.setDclsMonth("testDclsMonth2");
+        product2.setKorCoNm("testKorCoNm2");
+        product2.setFinPrdtNm("testFinPrdtNm2");
+        product2.setEtcNote("testEtcNote2");
+        product2.setJoinDeny(Product.JoinDeny.서민전용);
+        product2.setJoinMember(Product.JoinMember.만50세이상);
+        product2.setJoinWay(Product.JoinWay.스마트폰);
+
         productRepository.save(product1);
         productRepository.save(product2);
 
@@ -217,24 +236,22 @@ class UserServiceTest {
         portfolioRepository.save(portfolio2);
 
         // when
-        User foundUser = userRepository.findByIdWithProducts(user.getId()).get();
+        List<Portfolio> portfolios = userService.findPortfolios(user.getUsername());
 
         // then
-        Assertions.assertThat(foundUser.getPortfolios()).isEqualTo("");
-
-//        // when
-//        List<Portfolio> portfolios = userService.findPortfoliosWithUser(user.getUsername());
-//
-//        // then
-//        Assertions.assertThat(portfolios.size()).isEqualTo(2L);
+        Assertions.assertThat(portfolios.size()).isEqualTo(2L);
+        Assertions.assertThat(portfolios.get(0).getProduct().getFinPrdtCd()).isEqualTo("testFinPrdtCd1");
+        Assertions.assertThat(portfolios.get(1).getProduct().getFinPrdtCd()).isEqualTo("testFinPrdtCd2");
     }
 
     @Test
-    public void validateUserWithProductsTest() {
+    public void validateUserTest() {
         // given
 
         // when
+        Optional<User> nonExistUser = userRepository.findByUsername("NonExistUser");
 
         // then
+        Assertions.assertThat(nonExistUser).isEqualTo(Optional.empty());
     }
 }

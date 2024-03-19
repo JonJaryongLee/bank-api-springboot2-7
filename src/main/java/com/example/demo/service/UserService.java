@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.entity.Portfolio;
 import com.example.demo.entity.User;
+import com.example.demo.repository.PortfolioRepository;
 import com.example.demo.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PortfolioRepository portfolioRepository;
 
     @Value("${my.secret.key}")
     private String secretKey;
@@ -114,7 +116,7 @@ public class UserService {
      * @param user 토큰을 생성할 회원 정보를 담고 있는 User 객체입니다.
      * @return 생성된 JWT 토큰을 반환합니다.
      */
-    private String createToken (User user){
+    private String createToken(User user){
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 day
@@ -127,11 +129,10 @@ public class UserService {
      *
      * @param username 사용자 이름
      * @return 사용자와 관련된 포트폴리오 목록
-     * @throws IllegalStateException 주어진 사용자 이름을 가진 사용자를 찾을 수 없는 경우
      */
-    public List<Portfolio> findPortfoliosWithUser (String username){
-        User foundUser = validateUser(username);
-        return validateUserWithProducts(foundUser.getId()).getPortfolios();
+    public List<Portfolio> findPortfolios(String username){
+        User user = validateUser(username);
+        return portfolioRepository.findByUser(user);
     }
 
     /**
@@ -141,20 +142,8 @@ public class UserService {
      * @return 찾은 사용자
      * @throws IllegalStateException 주어진 사용자 이름을 가진 사용자를 찾을 수 없는 경우
      */
-    private User validateUser (String username){
+    private User validateUser(String username){
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalStateException("User does not exist"));
-    }
-
-    /**
-     * 주어진 사용자 ID를 가진 사용자가 존재하며, 해당 사용자의 가입상품도 함께 가져오는지 검증합니다.
-     *
-     * @param id 사용자 ID
-     * @return 찾은 사용자
-     * @throws IllegalStateException 주어진 ID를 가진 사용자를 찾을 수 없는 경우
-     */
-    private User validateUserWithProducts (Long id){
-        return userRepository.findByIdWithProducts(id)
                 .orElseThrow(() -> new IllegalStateException("User does not exist"));
     }
 
