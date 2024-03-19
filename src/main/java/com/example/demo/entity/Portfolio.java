@@ -5,27 +5,22 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@NamedEntityGraph(name = "article_with_user", attributeNodes = @NamedAttributeNode("user"))
 @Getter @Setter
-public class Article {
+public class Portfolio {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "article_id")
+    @Column(name = "portfolio_id")
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
-    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
-    private List<Comment> comments = new ArrayList<>();
-
-    private String title;
-    private String content;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

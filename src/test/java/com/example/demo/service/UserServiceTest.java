@@ -1,6 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.Portfolio;
+import com.example.demo.entity.Product;
 import com.example.demo.entity.User;
+import com.example.demo.repository.PortfolioRepository;
+import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -9,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +29,12 @@ class UserServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private PortfolioRepository portfolioRepository;
+
     private User user;
 
     @BeforeEach
@@ -34,7 +47,8 @@ class UserServiceTest {
 
     @AfterEach
     public void tearDown() {
-        userRepository.deleteByUsername(user.getUsername());
+        productRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -68,7 +82,7 @@ class UserServiceTest {
         userService.signUp(user);
 
         // when
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+        IllegalStateException e = assertThrows(IllegalStateException.class,
                 () -> userService.signUp(user));
 
         // then
@@ -82,12 +96,12 @@ class UserServiceTest {
         String anyPassword = "anyPassword";
 
         // when
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+        IllegalStateException e = assertThrows(IllegalStateException.class,
                 () -> userService.logIn(nonExistentUserId, anyPassword));
 
         // then
         Assertions.assertThat(e).isNotNull();
-        Assertions.assertThat(e.getMessage()).isEqualTo("로그인 중 에러가 발생했습니다: User does not exist");
+        Assertions.assertThat(e.getMessage()).isEqualTo("User does not exist");
     }
 
     @Test
@@ -99,7 +113,7 @@ class UserServiceTest {
         String invalidPassword = "invalidPassword";
 
         // when
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+        IllegalStateException e = assertThrows(IllegalStateException.class,
                 () -> userService.logIn(existentUserId, invalidPassword));
 
         // then
@@ -181,5 +195,46 @@ class UserServiceTest {
         // then
         Assertions.assertThat(token).isNotNull();
         Assertions.assertThat(userRepository.findByUsername(user.getUsername())).isNotNull();
+    }
+
+    @Test
+    public void findPortfoliosWithUser() {
+        // given
+        userRepository.save(user);
+
+        Product product1 = new Product();
+        Product product2 = new Product();
+        productRepository.save(product1);
+        productRepository.save(product2);
+
+        Portfolio portfolio1 = new Portfolio();
+        Portfolio portfolio2 = new Portfolio();
+        portfolio1.setUser(user);
+        portfolio1.setProduct(product1);
+        portfolioRepository.save(portfolio1);
+        portfolio2.setUser(user);
+        portfolio2.setProduct(product2);
+        portfolioRepository.save(portfolio2);
+
+        // when
+        User foundUser = userRepository.findByIdWithProducts(user.getId()).get();
+
+        // then
+        Assertions.assertThat(foundUser.getPortfolios()).isEqualTo("");
+
+//        // when
+//        List<Portfolio> portfolios = userService.findPortfoliosWithUser(user.getUsername());
+//
+//        // then
+//        Assertions.assertThat(portfolios.size()).isEqualTo(2L);
+    }
+
+    @Test
+    public void validateUserWithProductsTest() {
+        // given
+
+        // when
+
+        // then
     }
 }

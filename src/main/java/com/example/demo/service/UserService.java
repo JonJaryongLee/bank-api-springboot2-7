@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.Portfolio;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,7 +37,6 @@ public class UserService {
      *
      * @param user 등록할 회원 정보를 담고 있는 User 객체입니다.
      * @return 등록된 회원을 위한 JWT 토큰을 반환합니다.
-     * @throws IllegalArgumentException 사용자 ID가 이미 존재하는 경우, 사용자 ID 또는 비밀번호가 비어있는 경우 예외를 발생시킵니다.
      */
     public String signUp(User user) {
         validateNewUser(user);
@@ -72,11 +72,11 @@ public class UserService {
      * 새로 가입하려는 회원의 유효성을 검증합니다.
      *
      * @param user 검증할 회원. 이는 가입하려는 회원의 정보를 담고 있는 객체입니다.
-     * @throws IllegalArgumentException 이미 존재하는 사용자 ID일 경우 발생합니다.
+     * @throws IllegalStateException 이미 존재하는 사용자 ID일 경우 발생합니다.
      */
     private void validateNewUser(User user) {
         userRepository.findByUsername(user.getUsername()).ifPresent(u -> {
-            throw new IllegalArgumentException("회원 가입 중 에러가 발생했습니다: User ID already exists");
+            throw new IllegalStateException("회원 가입 중 에러가 발생했습니다: User ID already exists");
         });
     }
 
@@ -86,33 +86,26 @@ public class UserService {
      * @param username 사용자 아이디입니다.
      * @param password 사용자 비밀번호입니다.
      * @return 로그인한 회원을 위한 JWT 토큰을 반환합니다.
-     * @throws IllegalArgumentException 사용자 이름 또는 비밀번호가 유효하지 않은 경우 예외를 발생시킵니다.
+     * @throws IllegalStateException 사용자 이름 또는 비밀번호가 유효하지 않은 경우 예외를 발생시킵니다.
      */
     public String logIn(String username, String password) {
-        Optional<User> foundUser = userRepository.findByUsername(username);
-        validateUser(foundUser, password);
-
-        final String[] token = new String[1];
-        foundUser.ifPresent(u -> {
-            token[0] = createToken(u);
-        });
-        return token[0];
+        User foundUser = validateUser(username);
+        validatePassword(foundUser, password);
+        String token = createToken(foundUser);
+        return token;
     }
 
     /**
-     * 주어진 회원의 존재와 비밀번호를 검증합니다.
+     * 주어진 회원의 비밀번호를 검증합니다.
      *
      * @param foundUser 검증할 회원객체
      * @param password 검증할 비밀번호
-     * @throws IllegalArgumentException 회원이 존재하지 않거나 비밀번호가 일치하지 않을 경우 발생합니다.
+     * @throws IllegalStateException 회원이 존재하지 않거나 비밀번호가 일치하지 않을 경우 발생합니다.
      */
-    private void validateUser(Optional<User> foundUser, String password) {
-        foundUser.orElseThrow(() -> new IllegalArgumentException("로그인 중 에러가 발생했습니다: User does not exist"));
-        foundUser.ifPresent(u -> {
-            if (!passwordEncoder.matches(password, u.getPassword())) {
-                throw new IllegalArgumentException("로그인 중 에러가 발생했습니다: Invalid password");
-            }
-        });
+    private void validatePassword(User foundUser, String password) {
+        if (!passwordEncoder.matches(password, foundUser.getPassword())) {
+            throw new IllegalStateException("로그인 중 에러가 발생했습니다: Invalid password");
+        }
     }
 
     /**
@@ -121,11 +114,48 @@ public class UserService {
      * @param user 토큰을 생성할 회원 정보를 담고 있는 User 객체입니다.
      * @return 생성된 JWT 토큰을 반환합니다.
      */
-    private String createToken(User user) {
+    private String createToken (User user){
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 day
                 .signWith(getSecretKeySpec())
                 .compact();
     }
+
+    /**
+     * 주어진 사용자 이름과 관련된 포트폴리오를 찾습니다.
+     *
+     * @param username 사용자 이름
+     * @return 사용자와 관련된 포트폴리오 목록
+     * @throws IllegalStateException 주어진 사용자 이름을 가진 사용자를 찾을 수 없는 경우
+     */
+    public List<Portfolio> findPortfoliosWithUser (String username){
+        User foundUser = validateUser(username);
+        return validateUserWithProducts(foundUser.getId()).getPortfolios();
+    }
+
+    /**
+     * 주어진 사용자 이름을 가진 사용자가 존재하는지 검증합니다.
+     *
+     * @param username 사용자 이름
+     * @return 찾은 사용자
+     * @throws IllegalStateException 주어진 사용자 이름을 가진 사용자를 찾을 수 없는 경우
+     */
+    private User validateUser (String username){
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalStateException("User does not exist"));
+    }
+
+    /**
+     * 주어진 사용자 ID를 가진 사용자가 존재하며, 해당 사용자의 가입상품도 함께 가져오는지 검증합니다.
+     *
+     * @param id 사용자 ID
+     * @return 찾은 사용자
+     * @throws IllegalStateException 주어진 ID를 가진 사용자를 찾을 수 없는 경우
+     */
+    private User validateUserWithProducts (Long id){
+        return userRepository.findByIdWithProducts(id)
+                .orElseThrow(() -> new IllegalStateException("User does not exist"));
+    }
+
 }

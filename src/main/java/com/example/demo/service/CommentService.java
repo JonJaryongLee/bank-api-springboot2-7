@@ -24,6 +24,14 @@ public class CommentService {
     }
 
     /**
+     * 모든 댓글을 조회하되, 작성자와 게시글 정보를 포함합니다.
+     * @return 댓글 목록
+     */
+    public List<Comment> findCommentsWithUserAndArticle() {
+        return commentRepository.findAllWithUserAndArticle();
+    }
+
+    /**
      * 주어진 번호에 해당하는 댓글을 조회합니다.
      * @param commentNo 조회할 댓글 번호
      * @return 조회된 댓글
@@ -31,6 +39,17 @@ public class CommentService {
     public Comment findComment(Long commentNo) {
         Comment comment = verifyCommentExists(commentNo);
         return comment;
+    }
+
+    /**
+     * 주어진 번호에 해당하는 댓글을 조회하되, 작성자와 게시글 정보를 포함합니다.
+     * @param commentNo 조회할 댓글 번호
+     * @return 조회된 댓글
+     */
+    public Comment findCommentWithUserAndArticle(Long commentNo) {
+        verifyCommentExists(commentNo);
+        return commentRepository.findByIdWithUserAndArticle(commentNo)
+                .orElse(new Comment());
     }
 
     /**
@@ -69,19 +88,21 @@ public class CommentService {
     /**
      * 주어진 댓글이 존재하는지 검증합니다.
      * @param commentNo 검증할 댓글 번호
+     * @throws IllegalStateException 만약 존재하지 않는 댓글이라면, IllegalStateException 을 발생시킵니다.
      */
     private Comment verifyCommentExists(Long commentNo) {
         return commentRepository.findById(commentNo).orElseThrow(
-                () -> new IllegalArgumentException("Comment does not exist"));
+                () -> new IllegalStateException("Comment does not exist"));
     }
 
     /**
      * 주어진 댓글이 null이 아닌지 검증합니다.
      * @param comment 검증할 댓글
+     * @throws IllegalArgumentException 만약 전달한 comment 가 null 이라면 IllegalArgumentException 을 발생시킵니다.
      */
     private void verifyCommentNotNull(Comment comment) {
         if (comment == null) {
-            throw new NullPointerException("Comment is null");
+            throw new IllegalArgumentException("Comment is null");
         }
     }
 

@@ -46,17 +46,12 @@ class ArticleServiceTest {
 
     @AfterEach
     public void tearDown() {
-        List<Article> articles = articleRepository.findAll();
-        for (Article article : articles) {
-            if (article.getUser().getId().equals(user.getId())) {
-                articleRepository.deleteById(article.getId());
-            }
-        }
-        userRepository.deleteById(user.getId());
+        articleRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
-    public void testFindArticles() {
+    public void findArticlesTest() {
         // given
         List<Article> articles = articleService.findArticles();
 
@@ -66,7 +61,17 @@ class ArticleServiceTest {
     }
 
     @Test
-    public void testFindArticle() {
+    public void findArticlesWithUserTest() {
+        // given
+        List<Article> articles = articleService.findArticlesWithUser();
+
+        // then
+        Assertions.assertThat(articles).isNotNull();
+        Assertions.assertThat(articles.size()).isGreaterThan(0);
+    }
+
+    @Test
+    public void findArticleTest() {
         // given
         Long articleNo = article.getId();
 
@@ -79,7 +84,20 @@ class ArticleServiceTest {
     }
 
     @Test
-    public void testCreateArticle() {
+    public void findArticleWithUserTest() {
+        // given
+        Long articleNo = article.getId();
+
+        // when
+        Article foundArticle = articleService.findArticleWithUser(articleNo);
+
+        // then
+        Assertions.assertThat(foundArticle).isNotNull();
+        Assertions.assertThat(foundArticle.getId()).isEqualTo(articleNo);
+    }
+
+    @Test
+    public void createArticleTest() {
         // given
         Article newArticle = new Article();
         newArticle.setUser(user);
@@ -96,7 +114,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    public void testDeleteArticle() {
+    public void deleteArticleTest() {
         // given
         Long articleNo = article.getId();
 
@@ -104,7 +122,7 @@ class ArticleServiceTest {
         articleService.deleteArticle(articleNo);
 
         // then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
             articleService.findArticle(articleNo);
         });
         String expectedMessage = "Article does not exist";
@@ -113,7 +131,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    public void testUpdateArticle() {
+    public void updateArticleTest() {
         // given
         String updatedContent = "updated content";
         article.setContent(updatedContent);
@@ -128,9 +146,9 @@ class ArticleServiceTest {
     }
 
     @Test
-    public void testVerifyArticleExistsException() {
+    public void verifyArticleExistsExceptionTest() {
         // when
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
             articleService.findArticle(99L);
         });
 
@@ -141,12 +159,12 @@ class ArticleServiceTest {
     }
 
     @Test
-    public void testVerifyArticleNotNullException() {
+    public void verifyArticleNotNullExceptionTest() {
         // given
         Article nullArticle = null;
 
         // when
-        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             articleService.createArticle(nullArticle);
         });
 
@@ -157,7 +175,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    public void testVerifyEmptyTitleException() {
+    public void verifyEmptyTitleExceptionTest() {
         // given
         Article emptyFieldsArticle = new Article();
         emptyFieldsArticle.setTitle("   ");
@@ -175,7 +193,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    public void testVerifyEmptyContentException() {
+    public void verifyEmptyContentExceptionTest() {
         // given
         Article emptyFieldsArticle = new Article();
         emptyFieldsArticle.setTitle("dfasdf");

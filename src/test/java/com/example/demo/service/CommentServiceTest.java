@@ -55,23 +55,13 @@ class CommentServiceTest {
 
     @AfterEach
     public void tearDown() {
-        List<Article> articles = articleRepository.findAll();
-        List<Comment> comments = commentRepository.findAll();
-        for (Comment comment : comments) {
-            if (comment.getUser().getId().equals(user.getId())) {
-                commentRepository.deleteById(comment.getId());
-            }
-        }
-        for (Article article : articles) {
-            if (article.getUser().getId().equals(user.getId())) {
-                articleRepository.deleteById(article.getId());
-            }
-        }
-        userRepository.deleteById(user.getId());
+        commentRepository.deleteAll();
+        articleRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
-    public void testFindComments() {
+    public void findCommentsTest() {
         // given
         List<Comment> comments = commentService.findComments();
 
@@ -81,7 +71,17 @@ class CommentServiceTest {
     }
 
     @Test
-    public void testFindComment() {
+    public void findCommentsWithUserAndArticleTest() {
+        // given
+        List<Comment> comments = commentService.findCommentsWithUserAndArticle();
+
+        // then
+        Assertions.assertThat(comments).isNotNull();
+        Assertions.assertThat(comments.size()).isGreaterThan(0);
+    }
+
+    @Test
+    public void findCommentTest() {
         // given
         Long commentNo = comment.getId();
 
@@ -94,7 +94,20 @@ class CommentServiceTest {
     }
 
     @Test
-    public void testCreateComment() {
+    public void findCommentWithUserAndArticleTest() {
+        // given
+        Long commentNo = comment.getId();
+
+        // when
+        Comment foundComment = commentService.findCommentWithUserAndArticle(commentNo);
+
+        // then
+        Assertions.assertThat(foundComment).isNotNull();
+        Assertions.assertThat(foundComment.getId()).isEqualTo(commentNo);
+    }
+
+    @Test
+    public void createCommentTest() {
         // given
         Comment newComment = new Comment();
         newComment.setUser(user);
@@ -111,7 +124,7 @@ class CommentServiceTest {
     }
 
     @Test
-    public void testDeleteComment() {
+    public void deleteCommentTest() {
         // given
         Long commentNo = comment.getId();
 
@@ -119,7 +132,7 @@ class CommentServiceTest {
         commentService.deleteComment(commentNo);
 
         // then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
             commentService.findComment(commentNo);
         });
         String expectedMessage = "Comment does not exist";
@@ -128,7 +141,7 @@ class CommentServiceTest {
     }
 
     @Test
-    public void testUpdateComment() {
+    public void updateCommentTest() {
         // given
         String updatedContent = "updated content";
         comment.setContent(updatedContent);
@@ -143,9 +156,9 @@ class CommentServiceTest {
     }
 
     @Test
-    public void testVerifyCommentExistsException() {
+    public void verifyCommentExistsExceptionTest() {
         // when
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
             commentService.findComment(99L);
         });
 
@@ -156,12 +169,12 @@ class CommentServiceTest {
     }
 
     @Test
-    public void testVerifyCommentNotNullException() {
+    public void verifyCommentNotNullExceptionTest() {
         // given
         Comment nullComment = null;
 
         // when
-        NullPointerException exception = assertThrows(NullPointerException.class, () -> {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             commentService.createComment(nullComment);
         });
 
@@ -172,7 +185,7 @@ class CommentServiceTest {
     }
 
     @Test
-    public void testVerifyEmptyContentException() {
+    public void verifyEmptyContentExceptionTest() {
         // given
         Comment emptyFieldsComment = new Comment();
         emptyFieldsComment.setContent("     ");

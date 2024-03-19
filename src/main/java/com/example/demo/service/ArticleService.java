@@ -24,6 +24,14 @@ public class ArticleService {
     }
 
     /**
+     * 모든 게시글을 조회하되, 작성자 정보를 포함합니다.
+     * @return 게시글 목록
+     */
+    public List<Article> findArticlesWithUser() {
+        return articleRepository.findAllWithUser();
+    }
+
+    /**
      * 주어진 번호에 해당하는 게시글을 조회합니다.
      * @param articleNo 조회할 게시글 번호
      * @return 조회된 게시글
@@ -31,6 +39,17 @@ public class ArticleService {
     public Article findArticle(Long articleNo) {
         Article article = verifyArticleExists(articleNo);
         return article;
+    }
+
+    /**
+     * 주어진 번호에 해당하는 게시글을 조회하되, 작성자 정보를 포함합니다.
+     * @param articleNo 조회할 게시글 번호
+     * @return 조회된 게시글
+     */
+    public Article findArticleWithUser(Long articleNo) {
+        verifyArticleExists(articleNo);
+        return articleRepository.findByIdWithUser(articleNo)
+                .orElse(new Article());
     }
 
     /**
@@ -69,19 +88,21 @@ public class ArticleService {
     /**
      * 주어진 게시글이 존재하는지 검증합니다.
      * @param articleNo 검증할 게시글
+     * @throws IllegalStateException 만약 존재하지 않는 게시물이라면, IllegalStateException 을 발생시킵니다.
      */
     private Article verifyArticleExists(Long articleNo) {
         return articleRepository.findById(articleNo).orElseThrow(
-                () -> new IllegalArgumentException("Article does not exist"));
+                () -> new IllegalStateException("Article does not exist"));
     }
 
     /**
      * 주어진 게시글이 null이 아닌지 검증합니다.
      * @param article 검증할 게시글
+     * @throws IllegalArgumentException 만약 전달한 article 이 null 이라면 IllegalArgumentException 을 발생시킵니다.
      */
     private void verifyArticleNotNull(Article article) {
         if (article == null) {
-            throw new NullPointerException("Article is null");
+            throw new IllegalArgumentException("Article is null");
         }
     }
 
