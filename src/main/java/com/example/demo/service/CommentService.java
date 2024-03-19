@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,11 +73,11 @@ public class CommentService {
     /**
      * 주어진 댓글이 존재하는지 검증합니다.
      * @param commentNo 검증할 댓글 번호
-     * @throws IllegalStateException 만약 존재하지 않는 댓글이라면, IllegalStateException 을 발생시킵니다.
+     * @throws NoSuchElementException 만약 존재하지 않는 댓글이라면, NoSuchElementException 을 발생시킵니다.
      */
     private Comment verifyCommentExists(Long commentNo) {
         return commentRepository.findById(commentNo).orElseThrow(
-                () -> new IllegalStateException("Comment does not exist"));
+                () -> new NoSuchElementException("Comment does not exist"));
     }
 
     /**

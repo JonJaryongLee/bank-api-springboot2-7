@@ -13,9 +13,6 @@ public class Product {
     @Column(name = "product_id")
     private Long id;
 
-    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY)
-    private ProductOption productOption;
-
     @Column(name = "fin_prdt_cd")
     private String finPrdtCd;
 

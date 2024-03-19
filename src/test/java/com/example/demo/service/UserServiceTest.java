@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -96,7 +97,7 @@ class UserServiceTest {
         String anyPassword = "anyPassword";
 
         // when
-        IllegalStateException e = assertThrows(IllegalStateException.class,
+        NoSuchElementException e = assertThrows(NoSuchElementException.class,
                 () -> userService.logIn(nonExistentUserId, anyPassword));
 
         // then

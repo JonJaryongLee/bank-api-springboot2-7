@@ -15,6 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
@@ -140,11 +141,11 @@ public class UserService {
      *
      * @param username 사용자 이름
      * @return 찾은 사용자
-     * @throws IllegalStateException 주어진 사용자 이름을 가진 사용자를 찾을 수 없는 경우
+     * @throws NoSuchElementException 주어진 사용자 이름을 가진 사용자를 찾을 수 없는 경우
      */
     private User validateUser(String username){
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalStateException("User does not exist"));
+                .orElseThrow(() -> new NoSuchElementException("User does not exist"));
     }
 
 }

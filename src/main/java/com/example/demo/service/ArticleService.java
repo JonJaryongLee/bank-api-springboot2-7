@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
@@ -111,10 +112,10 @@ public class ArticleService {
     /**
      * 주어진 게시글이 존재하는지 검증합니다.
      * @param articleNo 검증할 게시글
-     * @throws IllegalStateException 만약 존재하지 않는 게시물이라면, IllegalStateException 을 발생시킵니다.
+     * @throws NoSuchElementException 만약 존재하지 않는 게시물이라면, NoSuchElementException 을 발생시킵니다.
      */
     private Article verifyArticleExists(Long articleNo) {
         return articleRepository.findById(articleNo).orElseThrow(
-                () -> new IllegalStateException("Article does not exist"));
+                () -> new NoSuchElementException("Article does not exist"));
     }
 }

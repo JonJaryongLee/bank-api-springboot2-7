@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -125,7 +126,7 @@ class CommentServiceTest {
         commentService.deleteComment(commentNo);
 
         // then
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
             commentService.findComment(commentNo);
         });
         String expectedMessage = "Comment does not exist";
@@ -146,14 +147,14 @@ class CommentServiceTest {
         Comment updatedComment = commentService.findComment(comment.getId());
         Assertions.assertThat(updatedComment).isNotNull();
         Assertions.assertThat(updatedComment.getContent()).isEqualTo(updatedContent);
-//        Assertions.assertThat(updatedComment.getCreatedAt()).isEqualTo(LocalDateTime.now());
-        Assertions.assertThat(updatedComment.getUpdatedAt()).isEqualTo(LocalDateTime.now());
+        Assertions.assertThat(updatedComment.getCreatedAt()).isEqualTo(comment.getCreatedAt());
+        Assertions.assertThat(updatedComment.getUpdatedAt()).isEqualTo(comment.getUpdatedAt());
     }
 
     @Test
     public void verifyCommentExistsExceptionTest() {
         // when
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
             commentService.findComment(99L);
         });
 

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -112,7 +113,7 @@ class ArticleServiceTest {
         articleService.deleteArticle(articleNo);
 
         // then
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
             articleService.findArticle(articleNo);
         });
         String expectedMessage = "Article does not exist";
@@ -141,7 +142,7 @@ class ArticleServiceTest {
     @Test
     public void verifyArticleExistsExceptionTest() {
         // when
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> {
             articleService.findArticle(99L);
         });
 
