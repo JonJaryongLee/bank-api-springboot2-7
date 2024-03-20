@@ -147,5 +147,4 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("User does not exist"));
     }
-
 }
