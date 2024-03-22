@@ -6,5 +6,3 @@ spring:
     driver-class-name: org.h2.Driver
   
   jpa.hibernate.ddl-auto: create
-
-my.secret.key: nJXUfDwMTsu7S/uGaQAlyP9tlplHRDivG9yyhB9hfu0kqHcK1+4dEzMmx7gSyQL4hTVB5YMtNfFeudPHSi9kmg==

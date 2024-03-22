@@ -1,17 +1,262 @@
 -- 유저 데이터 생성
-INSERT INTO User (username, password, is_superuser, nickname, age, money, salary, favorite_bank, tendency)
-VALUES ('jony123', 'password1', TRUE, '조니', 40, 1000000, 500000, 'KB국민은행', '알뜰형'),
-       ('sylvie123', 'password2', FALSE, '실비', 25, 2000000, 600000, '신한은행', '도전형'),
-       ('nana123', 'password3', FALSE, '나나', 10, 1500000, 400000, '하나은행', '성실형');
+INSERT INTO
+    user (
+        username,
+        password,
+        is_superuser,
+        nickname,
+        age,
+        money,
+        salary,
+        favorite_bank,
+        tendency
+    )
+VALUES
+    (
+        'jony123',
+        'password1',
+        TRUE,
+        '조니',
+        40,
+        1000000,
+        500000,
+        '국민은행',
+        '알뜰형'
+    ),
+    (
+        'sylvie123',
+        'password2',
+        FALSE,
+        '실비',
+        25,
+        2000000,
+        600000,
+        '신한은행',
+        '도전형'
+    ),
+    (
+        'nana123',
+        'password3',
+        FALSE,
+        '나나',
+        10,
+        1500000,
+        400000,
+        '하나은행',
+        '성실형'
+    );
 
 -- 게시글 데이터 생성
-INSERT INTO Article (user_id, title, content, created_at, updated_at)
-VALUES (1, '투자 팁 드립니다.', '엔비디아는 꼭 오를거같아요', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (2, '반도체가 반등할까요?', '아직 잘 모르겠네요. 개인적으론 제약에 투자하는게 나을거같기도 해요.', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (3, '역시 코인보다 주식이네요', '코인은 정말 불안해서 못하겠어요', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO
+    article (user_id, title, content, created_at, updated_at)
+VALUES
+    (
+        1,
+        '투자 팁 드립니다.',
+        '엔비디아는 꼭 오를거같아요',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    ),
+    (
+        2,
+        '반도체가 반등할까요?',
+        '아직 잘 모르겠네요. 개인적으론 제약에 투자하는게 나을거같기도 해요.',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    ),
+    (
+        3,
+        '역시 코인보다 주식이네요',
+        '코인은 정말 불안해서 못하겠어요',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    );
 
 -- 댓글 데이터 생성
-INSERT INTO Comment (user_id, article_id, content, created_at, updated_at)
-VALUES (1, 1, '진짜입니다. 저만 믿어보십시오.', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (2, 1, '엔비디아 안 샀는데 후회되네요...', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       (3, 3, '맞아요. 저도 결국 주식으로 돌아왔습니다.', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO
+    comment (
+        user_id,
+        article_id,
+        content,
+        created_at,
+        updated_at
+    )
+VALUES
+    (
+        1,
+        1,
+        '진짜입니다. 저만 믿어보십시오.',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    ),
+    (
+        2,
+        1,
+        '엔비디아 안 샀는데 후회되네요...',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    ),
+    (
+        3,
+        3,
+        '맞아요. 저도 결국 주식으로 돌아왔습니다.',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    );
+
+-- 상품 데이터 생성
+INSERT INTO
+    product (
+        dcls_month,
+        kor_co_nm,
+        fin_prdt_nm,
+        join_deny,
+        spcl_cnd
+    )
+VALUES
+    ('202306', '국민은행', 'KB Star 정기예금', '제한없음', '해당무'),
+    ('202306', '하나은행', '하나의정기예금', '제한없음', '해당무'),
+    ('202306', '신한은행', '쏠편한정기예금', '제한없음', '해당무'),
+    ('202306', '우리은행', 'WON플러스예금', '제한없음', '해당무'),
+    (
+        '202306',
+        '농협은행',
+        'NH왈츠회전예금 II',
+        '제한없음',
+        '급여이체실적(50만원 이상)이 있는 경우 0.1%p'
+    ),
+    (
+        '202306',
+        '경남은행',
+        'BNK더조은정기예금',
+        '제한없음',
+        '가입금액 2천만원 이상일 경우 0.20'
+    ),
+    (
+        '202306',
+        '광주은행',
+        '스마트모아Dream정기예금',
+        '해당없음',
+        '1천만원 이상 가입시 최대 0.2% 우대'
+    ),
+    (
+        '202306',
+        '대구은행',
+        'DGB주거래우대예금',
+        '해당없음',
+        '인터넷/스마트뱅킹을 통해 가입시 : 연0.05%p'
+    ),
+    ('202306', '부산은행', 'LIVE정기예금', '해당없음', '해당무'),
+    (
+        '202306',
+        '수협은행',
+        'Sh평생주거래우대예금 (만기일시지급식)',
+        '해당없음',
+        '거래고객우대금리 : 최대0.1% (신규시)'
+    ),
+    (
+        '202306',
+        '전북은행',
+        'JB 다이렉트예금통장 (만기일시지급식)',
+        '해당없음',
+        '해당무'
+    ),
+    (
+        '202306',
+        '제주은행',
+        '제주Dream 정기예금 (개인/만기 지급식)',
+        '해당없음',
+        '급여이체 최고 연 0.1%p(항목별 0.1%p)'
+    ),
+    ('202306', '카카오뱅크', '카카오뱅크 정기예금', '해당없음' ,'해당무'),
+    ('202306', '토스뱅크', '토스뱅크 먼저 이자 받는 정기예금', '해당없음', '해당무');
+
+-- 금리 데이터 생성
+INSERT INTO
+    rate (product_id, save_trm, init_rate, init_rate2)
+VALUES
+    (1, 6, 0.95, 3.59),
+    (1, 12, 0.95, 3.71),
+    (1, 24, 1.05, 3.22),
+    (1, 36, 1.15, 3.22),
+    (2, 6, 2.3, 3.6),
+    (2, 12, 2.6, 3.75),
+    (2, 24, 2.7, 3.25),
+    (2, 36, 2.8, 3.25),
+    (3, 6, 2.75, 3.65),
+    (3, 12, 2.9, 3.72),
+    (3, 24, 2.95, 3.45),
+    (3, 36, 3, 3.45),
+    (4, 6, 3.67, 3.67),
+    (4, 12, 3.73, 3.73),
+    (4, 24, 3.36, 3.36),
+    (4, 36, 3.33, 3.33),
+    (5, 6, 3.4, 3.5),
+    (5, 12, 3.4, 3.5),
+    (6, 6, 2.7, 3.2),
+    (6, 12, 3.05, 3.55),
+    (6, 24, 3.05, 3.55),
+    (7, 6, 3.36, 3.46),
+    (7, 12, 3.41, 3.61),
+    (7, 24, 3.57, 3.77),
+    (7, 36, 3.67, 3.67),
+    (8, 6, 2.46, 3.11),
+    (8, 12, 3.2, 3.85),
+    (8, 24, 3.22, 3.87),
+    (8, 36, 3.24, 3.89),
+    (9, 6, 2.55, 3.5),
+    (9, 12, 2.75, 3.65),
+    (9, 24, 2.8, 2.8),
+    (9, 36, 2.85, 2.85),
+    (10, 12, 3, 3.4),
+    (11, 6, 3.75, 3.8),
+    (12, 6, 2.85, 2.95),
+    (12, 12, 3.05, 3.15),
+    (12, 24, 3.15, 3.25),
+    (12, 36, 3.25, 3.35),
+    (13, 6, 3.2, 3.2),
+    (13, 12, 3.5, 3.5),
+    (13, 24, 3.5, 3.5),
+    (13, 36, 3.5, 3.5),
+    (14, 6, 3.5, 3.5);
+
+-- 가입방법 테이블 생성
+INSERT INTO
+    join_way (product_id, name)
+VALUES
+    (1, '인터넷'),
+    (1, '스마트폰'),
+    (1, '텔레뱅킹'),
+    (2, '스마트폰'),
+    (3, '스마트폰'),
+    (3, '기타'),
+    (4, '인터넷'),
+    (4, '스마트폰'),
+    (4, '텔레뱅킹'),
+    (5, '영업점'),
+    (5, '인터넷'),
+    (5, '스마트폰'),
+    (6, '인터넷'),
+    (6, '스마트폰'),
+    (7, '인터넷'),
+    (7, '스마트폰'),
+    (8, '영업점'),
+    (8, '인터넷'),
+    (8, '스마트폰'),
+    (9, '영업점'),
+    (10, '영업점'),
+    (11, '인터넷'),
+    (11, '스마트폰'),
+    (12, '영업점'),
+    (13, '스마트폰'),
+    (14, '스마트폰');
+
+-- 포트폴리오 데이터 생성
+INSERT INTO
+    portfolio (user_id, product_id, created_at, updated_at)
+VALUES
+    (1, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (1, 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (2, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (2, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (2, 12, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
