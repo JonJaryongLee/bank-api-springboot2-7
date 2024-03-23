@@ -17,9 +17,12 @@ import java.util.Optional;
 @SpringBootTest
 @Transactional
 class ArticleServiceTest {
-    @Autowired ArticleService articleService;
-    @Autowired MemberRepository memberRepository;
-    @Autowired ArticleRepository articleRepository;
+    @Autowired
+    ArticleService articleService;
+    @Autowired
+    MemberRepository memberRepository;
+    @Autowired
+    ArticleRepository articleRepository;
 
     @Test
     public void findArticlesTest() {
@@ -40,85 +43,85 @@ class ArticleServiceTest {
         Assertions.assertThat(foundArticles.size()).isEqualTo(2);
     }
 
- @Test
- public void findArticleTest() {
-     // given
-     Member member = new Member();
-     member.setUsername("username");
-     member.setPassword("password");
-     member.setNickname("nickname");
-     memberRepository.save(member);
-     Long savedArticleId = articleService.createArticle("username", "title", "content");
+    @Test
+    public void findArticleTest() {
+        // given
+        Member member = new Member();
+        member.setUsername("username");
+        member.setPassword("password");
+        member.setNickname("nickname");
+        memberRepository.save(member);
+        Long savedArticleId = articleService.createArticle("username", "title", "content");
 
-     // when
-     Article foundArticle = articleService.findArticle(savedArticleId);
+        // when
+        Article foundArticle = articleService.findArticle(savedArticleId);
 
-     // then
-     Assertions.assertThat(foundArticle.getId()).isEqualTo(savedArticleId);
-     Assertions.assertThat(foundArticle.getMember().getUsername()).isEqualTo("username");
-     Assertions.assertThat(foundArticle.getTitle()).isEqualTo("title");
-     Assertions.assertThat(foundArticle.getContent()).isEqualTo("content");
+        // then
+        Assertions.assertThat(foundArticle.getId()).isEqualTo(savedArticleId);
+        Assertions.assertThat(foundArticle.getMember().getUsername()).isEqualTo("username");
+        Assertions.assertThat(foundArticle.getTitle()).isEqualTo("title");
+        Assertions.assertThat(foundArticle.getContent()).isEqualTo("content");
 //         Assertions.assertThat(foundArticle.getCreatedAt()).isEqualTo(LocalDateTime.now());
 //         Assertions.assertThat(foundArticle.getUpdatedAt()).isEqualTo(LocalDateTime.now());
- }
+    }
 
- @Test
- public void deleteArticleTest() {
-     // given
-     Member member = new Member();
-     member.setUsername("username");
-     member.setPassword("password");
-     member.setNickname("nickname");
-     memberRepository.save(member);
-     Long savedArticleId = articleService.createArticle("username", "title", "content");
+    @Test
+    public void deleteArticleTest() {
+        // given
+        Member member = new Member();
+        member.setUsername("username");
+        member.setPassword("password");
+        member.setNickname("nickname");
+        memberRepository.save(member);
+        Long savedArticleId = articleService.createArticle("username", "title", "content");
 
-     // when
-     Long deletedId = articleService.deleteArticle(savedArticleId);
-     Optional<Article> invalidId = articleRepository.findById(deletedId);
+        // when
+        Long deletedId = articleService.deleteArticle(savedArticleId);
+        Optional<Article> invalidId = articleRepository.findById(deletedId);
 
-     // then
-     Assertions.assertThat(deletedId).isEqualTo(savedArticleId);
-     Assertions.assertThat(invalidId).isEqualTo(Optional.empty());
- }
+        // then
+        Assertions.assertThat(deletedId).isEqualTo(savedArticleId);
+        Assertions.assertThat(invalidId).isEqualTo(Optional.empty());
+    }
 
- @Test
- public void updateArticleTest() {
-     // given
-     Member member = new Member();
-     member.setUsername("username");
-     member.setPassword("password");
-     member.setNickname("nickname");
-     memberRepository.save(member);
-     Long savedArticleId = articleService.createArticle("username", "title", "content");
+    @Test
+    public void updateArticleTest() {
+        // given
+        Member member = new Member();
+        member.setUsername("username");
+        member.setPassword("password");
+        member.setNickname("nickname");
+        memberRepository.save(member);
+        Long savedArticleId = articleService.createArticle("username", "title", "content");
 
-     // when
-     Long updatedArticleId = articleService.updateArticle(savedArticleId, "username", "fixedTitle", "content");
+        // when
+        Long updatedArticleId = articleService.updateArticle(savedArticleId, "username", "fixedTitle", "content");
 
 
- }
+    }
 
- @Test
- public void validateMemberTest() {
- }
+    @Test
+    public void validateMemberTest() {
+    }
 
- @Test
- public void verifyArticleExistTest() {
- }
+    @Test
+    public void verifyArticleExistTest() {
+    }
 
- @Test
- public void verifyEmptyArticleNoTest() {
+    @Test
+    public void verifyEmptyArticleNoTest() {
 
- }
+    }
 
- @Test
- public void verifyEmptyTitleTest() {
- }
+    @Test
+    public void verifyEmptyTitleTest() {
+    }
 
- @Test
- public void verifyEmptyContentTest() {
- }
+    @Test
+    public void verifyEmptyContentTest() {
+    }
 
- @Test
- public void findCommentsTest() {
- }
+    @Test
+    public void findCommentsTest() {
+    }
 }
