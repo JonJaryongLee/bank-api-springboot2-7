@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/members")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/")
+    @PostMapping("/members")
     public CreateMemberResponse signUpMember(@RequestBody CreateMemberRequest request) {
         Member member = new Member();
         member.setUsername(request.getUsername());
