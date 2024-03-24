@@ -1,7 +1,7 @@
-//package com.example.demo.controller;
-//
-//import org.springframework.web.bind.annotation.RestController;
-//
-//@RestController
-//public class ProductController {
-//}
+package com.example.demo.controller;
+
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ProductController {
+}

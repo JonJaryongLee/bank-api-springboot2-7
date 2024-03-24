@@ -1,15 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Portfolio;
 import com.example.demo.entity.Member;
-import com.example.demo.repository.PortfolioRepository;
 import com.example.demo.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
@@ -17,7 +12,6 @@ import java.util.NoSuchElementException;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final PortfolioRepository portfolioRepository;
 
     /**
      * 새로운 회원을 등록합니다.
@@ -59,22 +53,5 @@ public class MemberService {
         memberRepository.findByUsername(username).ifPresent(u -> {
             throw new IllegalStateException("회원 가입 중 에러가 발생했습니다: Username already exists");
         });
-    }
-
-    /**
-     * 주어진 사용자 이름과 관련된 포트폴리오를 찾습니다.
-     *
-     * @param username
-     * @return 사용자와 관련된 포트폴리오 목록
-     * @throws NoSuchElementException username 이 존재하지 않으면 예외를 발생합니다.
-     */
-    public List<Portfolio> findPortfolios(String username) {
-        Member member = validateMember(username);
-        return portfolioRepository.findByMember(member);
-    }
-
-    private Member validateMember(String username) {
-        return memberRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("Member does not exist"));
     }
 }

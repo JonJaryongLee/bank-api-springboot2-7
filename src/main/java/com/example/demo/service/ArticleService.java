@@ -1,10 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Article;
-import com.example.demo.entity.Comment;
 import com.example.demo.entity.Member;
 import com.example.demo.repository.ArticleRepository;
-import com.example.demo.repository.CommentRepository;
 import com.example.demo.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,6 @@ import java.util.NoSuchElementException;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
-    private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
 
     /**
@@ -125,24 +122,13 @@ public class ArticleService {
         }
     }
 
-    private Member validateMember(String username) {
-        return memberRepository.findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("Member does not exist"));
-    }
-
-    /**
-     * 게시글의 전체 댓글을 가져옵니다.
-     *
-     * @param articleNo 게시글 아이디
-     * @return 게시글의 댓글 목록
-     */
-    public List<Comment> findComments(Long articleNo) {
-        Article article = verifyArticleExists(articleNo);
-        return commentRepository.findByArticle(article);
-    }
-
     private Article verifyArticleExists(Long articleNo) {
         return articleRepository.findById(articleNo).orElseThrow(
                 () -> new NoSuchElementException("Article does not exist"));
+    }
+
+    private Member validateMember(String username) {
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("Member does not exist"));
     }
 }

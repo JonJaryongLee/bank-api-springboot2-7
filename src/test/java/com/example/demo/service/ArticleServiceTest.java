@@ -4,6 +4,7 @@ import com.example.demo.entity.Article;
 import com.example.demo.entity.Member;
 import com.example.demo.repository.ArticleRepository;
 import com.example.demo.repository.MemberRepository;
+import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -96,32 +100,74 @@ class ArticleServiceTest {
 
         // when
         Long updatedArticleId = articleService.updateArticle(savedArticleId, "username", "fixedTitle", "content");
+        Article foundArticle = articleRepository.findById(updatedArticleId).get();
 
-
+        // then
+        Assertions.assertThat(foundArticle.getId()).isEqualTo(updatedArticleId);
+        Assertions.assertThat(foundArticle.getMember().getUsername()).isEqualTo("username");
+        Assertions.assertThat(foundArticle.getTitle()).isEqualTo("fixedTitle");
+        Assertions.assertThat(foundArticle.getContent()).isEqualTo("content");
+//        Assertions.assertThat(foundArticle.getCreatedAt()).isEqualTo(foundArticle.getUpdatedAt());
     }
 
     @Test
     public void validateMemberTest() {
+        // when
+        NoSuchElementException e = assertThrows(NoSuchElementException.class,
+                () -> articleService.createArticle("invaliduser", "title", "content"));
+
+        // then
+        Assertions.assertThat(e.getMessage()).isEqualTo("Member does not exist");
+
     }
 
     @Test
     public void verifyArticleExistTest() {
+        // when
+        NoSuchElementException e = assertThrows(NoSuchElementException.class,
+                () -> articleService.findArticle(99L));
+
+        // then
+        Assertions.assertThat(e.getMessage()).isEqualTo("Article does not exist");
     }
 
     @Test
     public void verifyEmptyArticleNoTest() {
+        // when
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> articleService.updateArticle(null, "testusername", "testtitle", "testcontent"));
 
+        // then
+        Assertions.assertThat(e.getMessage()).isEqualTo("ArticleNo cannot be empty");
+    }
+
+    @Test
+    public void verifyEmptyUsernameTest() {
+        // when
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> articleService.createArticle("  ", "testtitle", "testcontent"));
+
+        // then
+        Assertions.assertThat(e.getMessage()).isEqualTo("Username cannot be empty");
     }
 
     @Test
     public void verifyEmptyTitleTest() {
+        // when
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> articleService.createArticle("testusername", "    ", "testcontent"));
+
+        // then
+        Assertions.assertThat(e.getMessage()).isEqualTo("Title cannot be empty");
     }
 
     @Test
     public void verifyEmptyContentTest() {
-    }
+        // when
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> articleService.createArticle("testusername", "testtitle", "    "));
 
-    @Test
-    public void findCommentsTest() {
+        // then
+        Assertions.assertThat(e.getMessage()).isEqualTo("Content cannot be empty");
     }
 }

@@ -1,15 +1,13 @@
-package com.example.demo.controller.output;
+package com.example.demo.controller.response;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
-public class ArticleListDto {
+@Data
+@AllArgsConstructor
+public class ArticleDto {
 
     private Long id;
     private String username;

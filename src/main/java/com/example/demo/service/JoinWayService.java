@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.JoinWay;
 import com.example.demo.entity.Product;
+import com.example.demo.repository.JoinWayRepository;
 import com.example.demo.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,29 +14,22 @@ import java.util.NoSuchElementException;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ProductService {
+public class JoinWayService {
 
+    private final JoinWayRepository joinWayRepository;
     private final ProductRepository productRepository;
 
     /**
-     * 모든 제품을 조회합니다.
+     * 상품 번호에 해당하는 가입방법을 조회합니다.
      *
-     * @return 제품 목록
+     * @param productNo 조회할 상품 번호
+     * @return 상품 번호의 가입방법 리스트
+     * @throws NoSuchElementException 만약 존재하지 않는 상품이라면 예외를 발생시킵니다.
      */
-    public List<Product> findProducts() {
-        return productRepository.findAll();
-    }
-
-    /**
-     * 주어진 productNO 에 해당하는 상품을 조회합니다.
-     *
-     * @param productNo 상품 코드
-     * @return 해당 상품
-     * @throws NoSuchElementException 상품이 존재하지 않을 경우
-     */
-    public Product findProduct(Long productNo) {
+    public List<JoinWay> findJoinWays(Long productNo) {
         Product product = verifyProductExists(productNo);
-        return product;
+        List<JoinWay> foundJoinWays = joinWayRepository.findByProduct(product);
+        return foundJoinWays;
     }
 
     private Product verifyProductExists(Long productNo) {

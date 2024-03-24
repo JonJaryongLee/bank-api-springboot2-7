@@ -1,6 +1,6 @@
 -- 유저 데이터 생성
 INSERT INTO
-    user (
+    member (
         username,
         password,
         is_superuser,
@@ -48,7 +48,7 @@ VALUES
 
 -- 게시글 데이터 생성
 INSERT INTO
-    article (user_id, title, content, created_at, updated_at)
+    article (member_id, title, content, created_at, updated_at)
 VALUES
     (
         1,
@@ -75,7 +75,7 @@ VALUES
 -- 댓글 데이터 생성
 INSERT INTO
     comment (
-        user_id,
+        member_id,
         article_id,
         content,
         created_at,
@@ -253,7 +253,7 @@ VALUES
 
 -- 포트폴리오 데이터 생성
 INSERT INTO
-    portfolio (user_id, product_id, created_at, updated_at)
+    portfolio (member_id, product_id, created_at, updated_at)
 VALUES
     (1, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     (1, 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
